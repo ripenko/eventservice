@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "declaration": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "noUnusedLocals": true,
+        "noImplicitReturns": true,
+        "target": "es5",
+        "lib": [
+            "dom",
+            "es2015"
+        ],
+    },
+    "include": [
+        "./declarations.d.ts",
+        "./index.ts"
+    ]
+}
