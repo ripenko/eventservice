@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-declare var environment: {
+export declare var environment: {
     isDev: boolean;
     isProd: boolean;
 };

@@ -25,6 +25,7 @@ EventService.on("SomeEventName", async () => {
 
 // to trigger event.
 await EventService.fire("SomeEventName", null);
+// -> Did something!
 ```
 
 ### Passing data to the subscriber
@@ -75,7 +76,7 @@ console.log(result); // -> Hello World!
 ```
 
 ## Credits
-[Alexey Ripenko](https://github.com/AlexeyRipenko/)
+[Alexey Ripenko](http://ripenko.ru/), [GitHub](https://github.com/AlexeyRipenko/)
 
 ## License
 
