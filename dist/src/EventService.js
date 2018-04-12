@@ -63,7 +63,7 @@ var EventService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (environment.isDev) {
+                        if (environment && environment.isDev) {
                             console.log((waitCurrent ? "[WAIT] " : "") + "Event '" + eventName + "' has been executed: " + (EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
                         }
                         if (!EventService.subscriptions[eventName])

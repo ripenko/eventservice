@@ -36,7 +36,7 @@ export default class EventService {
     }
 
     public static async fire<T>(eventName: string, eventData: any, waitCurrent?: boolean): Promise<T> {
-        if (environment.isDev) {
+        if (environment && environment.isDev) {
             console.log(`${waitCurrent ? "[WAIT] " : ""}Event '${eventName}' has been executed: ${EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0}`, eventData);
         }
         if (!EventService.subscriptions[eventName]) return undefined;
