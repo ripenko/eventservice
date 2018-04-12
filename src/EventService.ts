@@ -1,5 +1,10 @@
 import * as _ from "lodash";
 
+declare var environment: {
+    isDev: boolean;
+    isProd: boolean;
+};
+
 export default class EventService {
 
     private static subscriptions: {
