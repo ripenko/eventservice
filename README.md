@@ -43,6 +43,7 @@ await EventService.fire("SomeEventName", new Date());
 ```
 
 ### Getting date from the subscriber
+Use method `on`.
 ```js
 import EventService from "eventservice";
 
@@ -57,6 +58,7 @@ console.log(result); // -> Hello World!
 ```
 
 ### Waiting a nested event
+Use parameter `waitCurrent`.
 ```ts
 import EventService from "eventservice";
 
@@ -73,6 +75,24 @@ EventService.on("SomeEventName1", async (name: string) => {
 // to trigger event. Take a look to the latest arg
 const result = await EventService.fire<string>("SomeEventName1", "World", true);
 console.log(result); // -> Hello World!
+```
+
+### Unsubscribe
+You can use method `off`
+```ts
+import EventService from "eventservice";
+
+// subscribe to event with name "SomeEventName"
+EventService.on("SomeEventName", async (name: string) => {
+    return `Hello ${name}!`;
+}, "SomeKey");
+
+// unsubscribe to event with name "SomeEventName"
+EventService.off("SomeEventName", "SomeKey");
+
+// to trigger event. Take a look to the latest arg
+const result = await EventService.fire<string>("SomeEventName", "World");
+console.log(result); // Nothing in console
 ```
 
 ## Credits

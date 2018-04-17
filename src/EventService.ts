@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import { clone, pull, remove, toUpper } from "lodash";
 
 export declare var environment: {
     isDev: boolean;
@@ -7,34 +7,39 @@ export declare var environment: {
 
 export default class EventService {
 
-    private static subscriptions: {
-        [name: string]: {
-            key: string;
-            action: (eventData: any) => Promise<any>
-        }[]
-    } = {};
-
-    private static firesQueue: (() => Promise<any>)[] = [];
-    private static queueInExecution: boolean = false;
-
-    private constructor() { }
-
+    /**
+     * Subscribe to event
+     * @param eventName The name of event
+     * @param callback The function callback that will be invoked when event will be fired
+     * @param key The optional param. The key of subscription. Used to identify the subscription for method `off`
+     */
     public static on<T>(eventName: string, callback: (eventData?: any) => Promise<T>, key: string = null): void {
         if (!EventService.subscriptions[eventName]) EventService.subscriptions[eventName] = [];
         EventService.subscriptions[eventName].push({
             key: key,
             action: callback
         });
-    };
+    }
 
+    /**
+     * Unsubscribe from event
+     * @param eventName The name of event
+     * @param key The key that identify subscription. Use certain key that has been given in method `on`
+     */
     public static off(eventName: string, key: string): void {
         if (!EventService.subscriptions[eventName]) return;
-        key = _.toUpper(key);
-        _.remove(EventService.subscriptions[eventName], (subscription) => {
-            return key === _.toUpper(subscription.key);
+        key = toUpper(key);
+        remove(EventService.subscriptions[eventName], (subscription) => {
+            return key === toUpper(subscription.key);
         });
     }
 
+    /**
+     * Fire event
+     * @param eventName The name of event
+     * @param eventData The data that will be passed to subscriber's callback method
+     * @param waitCurrent If the subscriber returns an `Promise` and if `waitCurrent` is true then it will wait for executing of returned `Promise`.
+     */
     public static async fire<T>(eventName: string, eventData: any, waitCurrent?: boolean): Promise<T> {
         if (environment && environment.isDev) {
             console.log(`${waitCurrent ? "[WAIT] " : ""}Event '${eventName}' has been executed: ${EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0}`, eventData);
@@ -43,14 +48,14 @@ export default class EventService {
         if (waitCurrent) {
             return new Promise<T>(resolve => {
                 EventService.firesQueue.push(async () => {
-                    let result = await EventService.fireExecute<T>(_.clone(EventService.subscriptions[eventName]), eventData);
+                    const result = await EventService.fireExecute<T>(clone(EventService.subscriptions[eventName]), eventData);
                     resolve(result);
                 });
 
                 if (!EventService.queueInExecution) {
                     EventService.queueInExecution = true;
 
-                    let queueExec = async (fireItem: () => Promise<T>): Promise<void> => {
+                    const queueExec = async (fireItem: () => Promise<T>): Promise<void> => {
                         await fireItem();
                         if (EventService.firesQueue.length === 0) {
                             EventService.queueInExecution = false;
@@ -64,19 +69,31 @@ export default class EventService {
             });
         }
 
-        return await EventService.fireExecute<T>(_.clone(EventService.subscriptions[eventName]), eventData);
+        return await EventService.fireExecute<T>(clone(EventService.subscriptions[eventName]), eventData);
     }
 
-    private static async fireExecute<T>(subscriptions: {
-        key: string;
-        action: (eventData: T) => Promise<T>
-    }[], eventData: T): Promise<T> {
-        let subscription = subscriptions[0];
+    private static subscriptions: {
+        [name: string]: Array<{
+            key: string;
+            action: (eventData: any) => Promise<any>
+        }>;
+    } = {};
+
+    private static firesQueue: Array<() => Promise<any>> = [];
+    private static queueInExecution: boolean = false;
+
+    private static async fireExecute<T>(
+        subscriptions: Array<{ key: string; action: (eventData: T) => Promise<T> }>,
+        eventData: T): Promise<T> {
+        const subscription = subscriptions[0];
         if (!subscription) return undefined;
-        let actionResult: T = await subscription.action(eventData);
-        if (typeof actionResult !== "undefined") return actionResult;
-        if (subscriptions.length == 0) return undefined;
 
-        return await EventService.fireExecute<T>(_.pull(subscriptions, subscription), eventData);
+        const actionResult: T = await subscription.action(eventData);
+        if (typeof actionResult !== "undefined") return actionResult;
+        if (subscriptions.length === 0) return undefined;
+
+        return await EventService.fireExecute<T>(pull(subscriptions, subscription), eventData);
     }
+
+    private constructor() { }
 }
