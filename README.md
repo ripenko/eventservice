@@ -53,7 +53,7 @@ EventService.on("SomeEventName", async () => {
 });
 
 // to trigger event.
-const result = await EventService.fire<string>("SomeEventName", null);
+const result: string = await EventService.fire<string>("SomeEventName", null);
 console.log(result); // -> Hello World!
 ```
 
@@ -73,7 +73,7 @@ EventService.on("SomeEventName1", async (name: string) => {
 });
 
 // to trigger event. Take a look to the latest arg
-const result = await EventService.fire<string>("SomeEventName1", "World", true);
+const result: string = await EventService.fire<string>("SomeEventName1", "World", true);
 console.log(result); // -> Hello World!
 ```
 
@@ -91,8 +91,8 @@ EventService.on("SomeEventName", async (name: string) => {
 EventService.off("SomeEventName", "SomeKey");
 
 // to trigger event. Take a look to the latest arg
-const result = await EventService.fire<string>("SomeEventName", "World");
-console.log(result); // Nothing in console
+const result: string = await EventService.fire<string>("SomeEventName", "World");
+console.log(result); // undefined
 ```
 
 ## Credits
