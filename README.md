@@ -58,13 +58,14 @@ console.log(result); // -> Hello World!
 ```
 
 ### Waiting a nested event
-Use parameter `waitCurrent`.
 ```ts
 import EventService from "eventservice";
 
 // subscribe to event with name "SomeEventName2"
-EventService.on("SomeEventName2", async (name: string) => {
-    return `Hello ${name}!`;
+EventService.on("SomeEventName2", (name: string) => {
+    return new Promise<string>((resolve, reject) => {
+        setTimeout(() => resolve(`Hello ${name}!`, 5000));
+    });
 });
 
 // subscribe to event with name "SomeEventName1"
@@ -73,8 +74,8 @@ EventService.on("SomeEventName1", async (name: string) => {
 });
 
 // to trigger event. Take a look to the latest arg
-const result: string = await EventService.fire<string>("SomeEventName1", "World", true);
-console.log(result); // -> Hello World!
+const result: string = await EventService.fire<string>("SomeEventName1", "World");
+console.log(result); // after 5s -> Hello World!
 ```
 
 ### Unsubscribe

@@ -35,41 +35,37 @@ export default class EventService {
     }
 
     /**
-     * Fire event
+     * Fire event.
+     * Also this method will wait for subscriber callback.
      * @param eventName The name of event
      * @param eventData The data that will be passed to subscriber's callback method
-     * @param waitCurrent If the subscriber returns an `Promise` and if `waitCurrent` is true then it will wait for executing of returned `Promise`.
      */
-    public static async fire<T>(eventName: string, eventData: any, waitCurrent?: boolean): Promise<T> {
+    public static async fire<T>(eventName: string, eventData: any): Promise<T> {
         if (environment && environment.isDev) {
-            console.log(`${waitCurrent ? "[WAIT] " : ""}Event '${eventName}' has been executed: ${EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0}`, eventData);
+            console.log(`Event '${eventName}' has been executed: ${EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0}`, eventData);
         }
         if (!EventService.subscriptions[eventName]) return undefined;
-        if (waitCurrent) {
-            return new Promise<T>(resolve => {
-                EventService.firesQueue.push(async () => {
-                    const result = await EventService.fireExecute<T>(clone(EventService.subscriptions[eventName]), eventData);
-                    resolve(result);
-                });
-
-                if (!EventService.queueInExecution) {
-                    EventService.queueInExecution = true;
-
-                    const queueExec = async (fireItem: () => Promise<T>): Promise<void> => {
-                        await fireItem();
-                        if (EventService.firesQueue.length === 0) {
-                            EventService.queueInExecution = false;
-                            return;
-                        }
-                        await queueExec(EventService.firesQueue.shift());
-                    };
-
-                    queueExec(EventService.firesQueue.shift());
-                }
+        return new Promise<T>(resolve => {
+            EventService.firesQueue.push(async () => {
+                const result = await EventService.fireExecute<T>(clone(EventService.subscriptions[eventName]), eventData);
+                resolve(result);
             });
-        }
 
-        return await EventService.fireExecute<T>(clone(EventService.subscriptions[eventName]), eventData);
+            if (!EventService.queueInExecution) {
+                EventService.queueInExecution = true;
+
+                const queueExec = async (fireItem: () => Promise<T>): Promise<void> => {
+                    await fireItem();
+                    if (EventService.firesQueue.length === 0) {
+                        EventService.queueInExecution = false;
+                        return;
+                    }
+                    await queueExec(EventService.firesQueue.shift());
+                };
+
+                queueExec(EventService.firesQueue.shift());
+            }
+        });
     }
 
     private static subscriptions: {
