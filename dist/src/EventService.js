@@ -35,10 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var _ = require("lodash");
+var lodash_1 = require("lodash");
 var EventService = /** @class */ (function () {
     function EventService() {
     }
+    /**
+     * Subscribe to event
+     * @param eventName The name of event
+     * @param callback The function callback that will be invoked when event will be fired
+     * @param key The optional param. The key of subscription. Used to identify the subscription for method `off`
+     */
     EventService.on = function (eventName, callback, key) {
         if (key === void 0) { key = null; }
         if (!EventService.subscriptions[eventName])
@@ -48,66 +54,69 @@ var EventService = /** @class */ (function () {
             action: callback
         });
     };
-    ;
+    /**
+     * Unsubscribe from event
+     * @param eventName The name of event
+     * @param key The key that identify subscription. Use certain key that has been given in method `on`
+     */
     EventService.off = function (eventName, key) {
         if (!EventService.subscriptions[eventName])
             return;
-        key = _.toUpper(key);
-        _.remove(EventService.subscriptions[eventName], function (subscription) {
-            return key === _.toUpper(subscription.key);
+        key = lodash_1.toUpper(key);
+        lodash_1.remove(EventService.subscriptions[eventName], function (subscription) {
+            return key === lodash_1.toUpper(subscription.key);
         });
     };
-    EventService.fire = function (eventName, eventData, waitCurrent) {
+    /**
+     * Fire event.
+     * Also this method will wait for subscriber callback.
+     * @param eventName The name of event
+     * @param eventData The data that will be passed to subscriber's callback method
+     */
+    EventService.fire = function (eventName, eventData) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (exports.environment && exports.environment.isDev) {
-                            console.log((waitCurrent ? "[WAIT] " : "") + "Event '" + eventName + "' has been executed: " + (EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
-                        }
-                        if (!EventService.subscriptions[eventName])
-                            return [2 /*return*/, undefined];
-                        if (waitCurrent) {
-                            return [2 /*return*/, new Promise(function (resolve) {
-                                    EventService.firesQueue.push(function () { return __awaiter(_this, void 0, void 0, function () {
-                                        var result;
-                                        return __generator(this, function (_a) {
-                                            switch (_a.label) {
-                                                case 0: return [4 /*yield*/, EventService.fireExecute(_.clone(EventService.subscriptions[eventName]), eventData)];
-                                                case 1:
-                                                    result = _a.sent();
-                                                    resolve(result);
-                                                    return [2 /*return*/];
-                                            }
-                                        });
-                                    }); });
-                                    if (!EventService.queueInExecution) {
-                                        EventService.queueInExecution = true;
-                                        var queueExec_1 = function (fireItem) { return __awaiter(_this, void 0, void 0, function () {
-                                            return __generator(this, function (_a) {
-                                                switch (_a.label) {
-                                                    case 0: return [4 /*yield*/, fireItem()];
-                                                    case 1:
-                                                        _a.sent();
-                                                        if (EventService.firesQueue.length === 0) {
-                                                            EventService.queueInExecution = false;
-                                                            return [2 /*return*/];
-                                                        }
-                                                        return [4 /*yield*/, queueExec_1(EventService.firesQueue.shift())];
-                                                    case 2:
-                                                        _a.sent();
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); };
-                                        queueExec_1(EventService.firesQueue.shift());
-                                    }
-                                })];
-                        }
-                        return [4 /*yield*/, EventService.fireExecute(_.clone(EventService.subscriptions[eventName]), eventData)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                if (exports.environment && exports.environment.isDev) {
+                    console.log("Event '" + eventName + "' has been executed: " + (EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
                 }
+                if (!EventService.subscriptions[eventName])
+                    return [2 /*return*/, undefined];
+                return [2 /*return*/, new Promise(function (resolve) {
+                        EventService.firesQueue.push(function () { return __awaiter(_this, void 0, void 0, function () {
+                            var result;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, EventService.fireExecute(lodash_1.clone(EventService.subscriptions[eventName]), eventData)];
+                                    case 1:
+                                        result = _a.sent();
+                                        resolve(result);
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); });
+                        if (!EventService.queueInExecution) {
+                            EventService.queueInExecution = true;
+                            var queueExec_1 = function (fireItem) { return __awaiter(_this, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, fireItem()];
+                                        case 1:
+                                            _a.sent();
+                                            if (EventService.firesQueue.length === 0) {
+                                                EventService.queueInExecution = false;
+                                                return [2 /*return*/];
+                                            }
+                                            return [4 /*yield*/, queueExec_1(EventService.firesQueue.shift())];
+                                        case 2:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); };
+                            queueExec_1(EventService.firesQueue.shift());
+                        }
+                    })];
             });
         });
     };
@@ -125,9 +134,9 @@ var EventService = /** @class */ (function () {
                         actionResult = _a.sent();
                         if (typeof actionResult !== "undefined")
                             return [2 /*return*/, actionResult];
-                        if (subscriptions.length == 0)
+                        if (subscriptions.length === 0)
                             return [2 /*return*/, undefined];
-                        return [4 /*yield*/, EventService.fireExecute(_.pull(subscriptions, subscription), eventData)];
+                        return [4 /*yield*/, EventService.fireExecute(lodash_1.pull(subscriptions, subscription), eventData)];
                     case 2: return [2 /*return*/, _a.sent()];
                 }
             });
