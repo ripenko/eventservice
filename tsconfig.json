@@ -14,13 +14,9 @@
         "lib": [
             "dom",
             "es2015"
-        ],
-        "paths": {
-            "@/*": [ "./src/*" ]
-        },
-        "baseUrl": "./src"
+        ]
     },
     "include": [
-        "./src/**/*"
+        "./index.ts"
     ]
 }
