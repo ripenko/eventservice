@@ -5,16 +5,22 @@
         "declaration": true,
         "noImplicitAny": true,
         "module": "commonjs",
+        "moduleResolution": "node",
         "noUnusedLocals": true,
         "noImplicitReturns": true,
+        "traceResolution": false,
+        "allowSyntheticDefaultImports": true,
         "target": "es5",
         "lib": [
             "dom",
             "es2015"
         ],
+        "paths": {
+            "@/*": [ "./src/*" ]
+        },
+        "baseUrl": "./src"
     },
     "include": [
-        "./declarations.d.ts",
-        "./index.ts"
+        "./src/**/*"
     ]
 }

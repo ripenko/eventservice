@@ -60,12 +60,12 @@ var EventService = /** @class */ (function () {
      * @param key The key that identify subscription. Use certain key that has been given in method `on`
      */
     EventService.off = function (eventName, key) {
+        if (key === void 0) { key = null; }
+        EventService.log("EventService.off(\"" + eventName + "\", \"" + key + "\")");
         if (!EventService.subscriptions[eventName])
             return;
-        key = lodash_1.toUpper(key);
-        lodash_1.remove(EventService.subscriptions[eventName], function (subscription) {
-            return key === lodash_1.toUpper(subscription.key);
-        });
+        EventService.subscriptions[eventName] = EventService.subscriptions[eventName].filter(function (x) { return x.key !== key; });
+        EventService.log("EventService.subscription[\"" + eventName + "\"]", EventService.subscriptions[eventName]);
     };
     /**
      * Fire event.
@@ -75,57 +75,16 @@ var EventService = /** @class */ (function () {
      */
     EventService.fire = function (eventName, eventData) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
-                if (exports.environment && exports.environment.isDev) {
-                    console.log("Event '" + eventName + "' has been executed: " + (EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
-                }
+                EventService.log("Event '" + eventName + "' has been executed: " + (EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
                 if (!EventService.subscriptions[eventName])
                     return [2 /*return*/, undefined];
-                return [2 /*return*/, new Promise(function (resolve, reject) {
-                        EventService.firesQueue.push(function () { return __awaiter(_this, void 0, void 0, function () {
-                            var result, err_1;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        _a.trys.push([0, 2, , 3]);
-                                        return [4 /*yield*/, EventService.fireExecute(lodash_1.clone(EventService.subscriptions[eventName]), eventData)];
-                                    case 1:
-                                        result = _a.sent();
-                                        resolve(result);
-                                        return [3 /*break*/, 3];
-                                    case 2:
-                                        err_1 = _a.sent();
-                                        reject(err_1);
-                                        return [3 /*break*/, 3];
-                                    case 3: return [2 /*return*/];
-                                }
-                            });
-                        }); });
-                        if (!EventService.queueInExecution) {
-                            EventService.queueInExecution = true;
-                            var queueExec_1 = function (fireItem) { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, fireItem()];
-                                        case 1:
-                                            _a.sent();
-                                            if (EventService.firesQueue.length === 0) {
-                                                EventService.queueInExecution = false;
-                                                return [2 /*return*/];
-                                            }
-                                            return [4 /*yield*/, queueExec_1(EventService.firesQueue.shift())];
-                                        case 2:
-                                            _a.sent();
-                                            return [2 /*return*/];
-                                    }
-                                });
-                            }); };
-                            queueExec_1(EventService.firesQueue.shift());
-                        }
-                    })];
+                return [2 /*return*/, EventService.fireExecute(lodash_1.clone(EventService.subscriptions[eventName]), eventData)];
             });
         });
+    };
+    EventService.clear = function () {
+        EventService.subscriptions = {};
     };
     EventService.fireExecute = function (subscriptions, eventData) {
         return __awaiter(this, void 0, void 0, function () {
@@ -139,19 +98,19 @@ var EventService = /** @class */ (function () {
                         return [4 /*yield*/, subscription.action(eventData)];
                     case 1:
                         actionResult = _a.sent();
-                        if (typeof actionResult !== "undefined")
+                        if (subscriptions.length <= 1)
                             return [2 /*return*/, actionResult];
-                        if (subscriptions.length === 0)
-                            return [2 /*return*/, undefined];
-                        return [4 /*yield*/, EventService.fireExecute(lodash_1.pull(subscriptions, subscription), eventData)];
-                    case 2: return [2 /*return*/, _a.sent()];
+                        return [2 /*return*/, EventService.fireExecute(lodash_1.pull(subscriptions, subscription), actionResult === undefined ? eventData : actionResult)];
                 }
             });
         });
     };
+    EventService.log = function (message, data) {
+        if (console && console.EventServiceDebug) {
+            console.log(message, data);
+        }
+    };
     EventService.subscriptions = {};
-    EventService.firesQueue = [];
-    EventService.queueInExecution = false;
     return EventService;
 }());
 exports.default = EventService;
