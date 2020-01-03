@@ -1,4 +1,5 @@
-import { clone, pull } from "lodash";
+import clone from "lodash.clone";
+import pull from "lodash.pull";
 
 export declare var environment: {
     isDev: boolean;

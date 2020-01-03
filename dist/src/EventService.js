@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -34,8 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = require("lodash");
+var lodash_clone_1 = __importDefault(require("lodash.clone"));
+var lodash_pull_1 = __importDefault(require("lodash.pull"));
 var EventService = /** @class */ (function () {
     function EventService() {
     }
@@ -79,7 +84,7 @@ var EventService = /** @class */ (function () {
                 EventService.log("Event '" + eventName + "' has been executed: " + (EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
                 if (!EventService.subscriptions[eventName])
                     return [2 /*return*/, undefined];
-                return [2 /*return*/, EventService.fireExecute(lodash_1.clone(EventService.subscriptions[eventName]), eventData)];
+                return [2 /*return*/, EventService.fireExecute(lodash_clone_1.default(EventService.subscriptions[eventName]), eventData)];
             });
         });
     };
@@ -100,7 +105,7 @@ var EventService = /** @class */ (function () {
                         actionResult = _a.sent();
                         if (subscriptions.length <= 1)
                             return [2 /*return*/, actionResult];
-                        return [2 /*return*/, EventService.fireExecute(lodash_1.pull(subscriptions, subscription), actionResult === undefined ? eventData : actionResult)];
+                        return [2 /*return*/, EventService.fireExecute(lodash_pull_1.default(subscriptions, subscription), actionResult === undefined ? eventData : actionResult)];
                 }
             });
         });
