@@ -2,8 +2,7 @@
 
 The Promise-based simple event bus service
 
-[![build status](https://secure.travis-ci.org/AlexeyRipenko/eventservice.svg)](http://travis-ci.org/AlexeyRipenko/eventservice)
-[![dependency status](https://david-dm.org/AlexeyRipenko/eventservice.svg)](https://david-dm.org/AlexeyRipenko/eventservice)
+[![build status](https://secure.travis-ci.org/ripenko/eventservice.svg)](http://travis-ci.org/AlexeyRipenko/eventservice)
 
 ## Installation
 
