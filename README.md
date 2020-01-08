@@ -2,7 +2,7 @@
 
 The Promise-based simple event bus service
 
-[![Build Status](https://travis-ci.org/AlexeyRipenko/eventservice.svg?branch=master)](https://travis-ci.org/AlexeyRipenko/eventservice)
+[![Build Status](https://travis-ci.org/ripenko/eventservice.svg?branch=master)](https://travis-ci.org/ripenko/eventservice)
 
 ## Installation
 
@@ -96,7 +96,7 @@ console.log(result); // undefined
 ```
 
 ## Credits
-[Alexey Ripenko](http://ripenko.ru/), [GitHub](https://github.com/AlexeyRipenko/)
+[Alexey Ripenko](http://ripenko.ru/), [GitHub](https://github.com/ripenko/)
 
 ## License
 
