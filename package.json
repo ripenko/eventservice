@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "publishConfig": {
-    "registry": "http://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org"
   },
   "author": "Alexey Ripenko <alexey@ripenko.ru>",
   "license": "MIT",
