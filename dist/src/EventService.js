@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -66,11 +66,11 @@ var EventService = /** @class */ (function () {
      */
     EventService.off = function (eventName, key) {
         if (key === void 0) { key = null; }
-        EventService.log("EventService.off(\"" + eventName + "\", \"" + key + "\")");
+        EventService.log("EventService.off(\"".concat(eventName, "\", \"").concat(key, "\")"));
         if (!EventService.subscriptions[eventName])
             return;
         EventService.subscriptions[eventName] = EventService.subscriptions[eventName].filter(function (x) { return x.key !== key; });
-        EventService.log("EventService.subscription[\"" + eventName + "\"]", EventService.subscriptions[eventName]);
+        EventService.log("EventService.subscription[\"".concat(eventName, "\"]"), EventService.subscriptions[eventName]);
     };
     /**
      * Fire event.
@@ -81,10 +81,10 @@ var EventService = /** @class */ (function () {
     EventService.fire = function (eventName, eventData) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                EventService.log("Event '" + eventName + "' has been executed: " + (EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
+                EventService.log("Event '".concat(eventName, "' has been executed: ").concat(EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
                 if (!EventService.subscriptions[eventName])
                     return [2 /*return*/, undefined];
-                return [2 /*return*/, EventService.fireExecute(lodash_clone_1.default(EventService.subscriptions[eventName]), eventData)];
+                return [2 /*return*/, EventService.fireExecute((0, lodash_clone_1.default)(EventService.subscriptions[eventName]), eventData)];
             });
         });
     };
@@ -105,7 +105,7 @@ var EventService = /** @class */ (function () {
                         actionResult = _a.sent();
                         if (subscriptions.length <= 1)
                             return [2 /*return*/, actionResult];
-                        return [2 /*return*/, EventService.fireExecute(lodash_pull_1.default(subscriptions, subscription), actionResult === undefined ? eventData : actionResult)];
+                        return [2 /*return*/, EventService.fireExecute((0, lodash_pull_1.default)(subscriptions, subscription), actionResult === undefined ? eventData : actionResult)];
                 }
             });
         });
