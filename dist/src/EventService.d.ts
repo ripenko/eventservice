@@ -9,7 +9,7 @@ export default class EventService {
      * @param callback The function callback that will be invoked when event will be fired
      * @param key The optional param. The key of subscription. Used to identify the subscription for method `off`
      */
-    static on<T>(eventName: string, callback: (eventData?: any, prevSubscriptionResult?: any) => Promise<T>, key?: string): void;
+    static on<T>(eventName: string, callback: (eventData?: any, prevSubscriptionResult?: any) => Promise<T>, key?: string | null): void;
     /**
      * Unsubscribe from event
      * @param eventName The name of event
@@ -22,7 +22,7 @@ export default class EventService {
      * @param eventName The name of event
      * @param eventData The data that will be passed to subscriber's callback method
      */
-    static fire<T>(eventName: string, eventData?: any): Promise<T>;
+    static fire<T, TData extends T | undefined>(eventName: string, eventData?: TData): Promise<T | undefined>;
     static clear(): void;
     private static subscriptions;
     private static fireExecute;

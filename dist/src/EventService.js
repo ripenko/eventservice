@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -35,12 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_clone_1 = __importDefault(require("lodash.clone"));
-var lodash_pull_1 = __importDefault(require("lodash.pull"));
 var EventService = /** @class */ (function () {
     function EventService() {
     }
@@ -56,7 +60,7 @@ var EventService = /** @class */ (function () {
             EventService.subscriptions[eventName] = [];
         EventService.subscriptions[eventName].push({
             key: key,
-            action: callback
+            action: callback,
         });
     };
     /**
@@ -84,7 +88,7 @@ var EventService = /** @class */ (function () {
                 EventService.log("Event '".concat(eventName, "' has been executed: ").concat(EventService.subscriptions[eventName] ? EventService.subscriptions[eventName].length : 0), eventData);
                 if (!EventService.subscriptions[eventName])
                     return [2 /*return*/, undefined];
-                return [2 /*return*/, EventService.fireExecute((0, lodash_clone_1.default)(EventService.subscriptions[eventName]), eventData)];
+                return [2 /*return*/, EventService.fireExecute(__spreadArray([], EventService.subscriptions[eventName], true), eventData)];
             });
         });
     };
@@ -93,19 +97,21 @@ var EventService = /** @class */ (function () {
     };
     EventService.fireExecute = function (subscriptions, eventData) {
         return __awaiter(this, void 0, void 0, function () {
-            var subscription, actionResult;
+            var subscription, rest, actionResult;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        subscription = subscriptions[0];
-                        if (!subscription)
+                        subscription = subscriptions[0], rest = subscriptions.slice(1);
+                        if (!subscription) {
                             return [2 /*return*/, undefined];
+                        }
                         return [4 /*yield*/, subscription.action(eventData)];
                     case 1:
                         actionResult = _a.sent();
-                        if (subscriptions.length <= 1)
+                        if (rest.length === 0) {
                             return [2 /*return*/, actionResult];
-                        return [2 /*return*/, EventService.fireExecute((0, lodash_pull_1.default)(subscriptions, subscription), actionResult === undefined ? eventData : actionResult)];
+                        }
+                        return [2 /*return*/, EventService.fireExecute(rest, actionResult === undefined ? eventData : actionResult)];
                 }
             });
         });
