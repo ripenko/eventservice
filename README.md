@@ -1,101 +1,132 @@
 # eventservice
 
-The Promise-based simple event bus service
+A simple Promise-based event bus service.
 
-[![Build Status](https://travis-ci.org/ripenko/eventservice.svg?branch=master)](https://travis-ci.org/ripenko/eventservice)
+[![npm version](https://img.shields.io/npm/v/eventservice)](https://www.npmjs.com/package/eventservice)
 
 ## Installation
 
-```
-npm install --save eventservice
+```bash
+npm install eventservice
 ```
 
 ## Usage
 
-### Simple usage
-```js
+### Basic usage
+
+```ts
 import EventService from "eventservice";
 
-// subscribe to event with name "SomeEventName"
+// Subscribe to an event named "SomeEventName"
 EventService.on("SomeEventName", async () => {
-    //do something
-    console.log("Did something!");
+  console.log("Did something!");
 });
 
-// to trigger event.
-await EventService.fire("SomeEventName", null);
+// Trigger the event
+await EventService.fire("SomeEventName");
 // -> Did something!
 ```
 
-### Passing data to the subscriber
-```js
+### Passing data to a subscriber
+
+```ts
 import EventService from "eventservice";
 
-// subscribe to event with name "SomeEventName"
+// Subscribe to an event named "SomeEventName"
 EventService.on("SomeEventName", async (date: Date) => {
-    console.log(date);
+  console.log(date);
 });
 
-// to trigger event. Take a look to the second arg
+// Trigger the event
 await EventService.fire("SomeEventName", new Date());
 // -> current date
 ```
 
-### Getting date from the subscriber
-Use method `on`.
-```js
+### Getting a result
+
+```ts
 import EventService from "eventservice";
 
-// subscribe to event with name "SomeEventName"
+// Subscribe to an event named "SomeEventName"
 EventService.on("SomeEventName", async () => {
-    return "Hello World!"
+  return "Hello World!";
 });
 
-// to trigger event.
-const result: string = await EventService.fire<string>("SomeEventName", null);
+// Trigger the event
+const result: string | undefined = await EventService.fire<string>("SomeEventName");
 console.log(result); // -> Hello World!
 ```
 
-### Waiting a nested event
+### Waiting for a nested event
+
 ```ts
 import EventService from "eventservice";
 
-// subscribe to event with name "SomeEventName2"
+// Subscribe to an event named "SomeEventName2"
 EventService.on("SomeEventName2", (name: string) => {
-    return new Promise<string>((resolve, reject) => {
-        setTimeout(() => resolve(`Hello ${name}!`, 5000));
-    });
+  return new Promise<string>((resolve) => {
+    setTimeout(() => resolve(`Hello ${name}!`), 5000);
+  });
 });
 
-// subscribe to event with name "SomeEventName1"
+// Subscribe to an event named "SomeEventName1"
 EventService.on("SomeEventName1", async (name: string) => {
-    return await EventService.fire<string>("SomeEventName1", name);
+  return await EventService.fire<string>("SomeEventName2", name);
 });
 
-// to trigger event. Take a look to the latest arg
-const result: string = await EventService.fire<string>("SomeEventName1", "World");
+// Trigger the event
+const result: string | undefined = await EventService.fire<string>("SomeEventName1", "World");
 console.log(result); // after 5s -> Hello World!
 ```
 
-### Unsubscribe
-You can use method `off`
+### Unsubscribing
+
+You can use the `off` method.
+
 ```ts
 import EventService from "eventservice";
 
-// subscribe to event with name "SomeEventName"
-EventService.on("SomeEventName", async (name: string) => {
+// Subscribe to an event named "SomeEventName"
+EventService.on(
+  "SomeEventName",
+  async (name: string) => {
     return `Hello ${name}!`;
-}, "SomeKey");
+  },
+  "SomeKey",
+);
 
-// unsubscribe to event with name "SomeEventName"
+// Unsubscribe from the event
 EventService.off("SomeEventName", "SomeKey");
 
-// to trigger event. Take a look to the latest arg
-const result: string = await EventService.fire<string>("SomeEventName", "World");
-console.log(result); // undefined
+// Trigger the event
+const result: string | undefined = await EventService.fire<string>("SomeEventName", "World");
+console.log(result); // -> undefined
 ```
 
+## API
+
+### `EventService.on(eventName, callback, key?)`
+
+Subscribes to an event.
+
+- `eventName` — event name
+- `callback` — async callback that will be called when the event is fired
+- `key` — optional subscription key used for unsubscribing
+
+### `EventService.off(eventName, key?)`
+
+Unsubscribes from an event by key.
+
+### `EventService.fire(eventName, eventData?)`
+
+Fires an event and waits until all subscribers finish.
+
+### `EventService.clear()`
+
+Removes all subscriptions.
+
 ## Credits
+
 [Alexey Ripenko](http://ripenko.ru/), [GitHub](https://github.com/ripenko/)
 
 ## License
